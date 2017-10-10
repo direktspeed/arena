@@ -20,7 +20,7 @@ const exphbs = require('express-handlebars');
   const defaultConfig = require(path.join(__dirname, 'config', 'index.json'));
 
   const Queues = require('./queue');
-  app.locals.Queues = new Queues(defaultConfig);
+  app.locals.Queues = new Queues();
   app.locals.basePath = '';
 
   app.set('views', `${__dirname}/views`);
