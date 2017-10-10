@@ -1,26 +1,31 @@
-const express = require('express');
 const path = require('path');
-const Arena = require('./src/server/app');
+const app = require('./src/server/app');
 const routes = require('./src/server/views/routes');
+const Queues = app.locals.Queues;
+    app.use(express.static(path.join(__dirname, 'public')));
+    app.use(routes);
 
-function run(config, listenOpts = {}) {
-  const {app, Queues} = Arena();
+function setup(config) {  
 
-  if (config) Queues.setConfig(config);
-
-  app.locals.basePath = listenOpts.basePath || app.locals.basePath;
-
-  app.use(app.locals.basePath, express.static(path.join(__dirname, 'public')));
-  app.use(app.locals.basePath, routes);
-
-  const port = listenOpts.port || 4567;
-  if (!listenOpts.disableListen) {
-    app.listen(port, () => console.log(`Arena is running on port ${port}`));
+  if (config.queues) {
+    config.queues.map(Queues.addQueue)
   }
 
   return app;
 }
 
-if (require.main === module) run();
+module.exports = setup;
 
-module.exports = run;
+if (require.main === module) {
+  let instance = setup({
+    port: 4567,
+    queues: [{
+      "name": "my_queue",
+      "port": 6381,
+      "host": "127.0.0.1",
+      "hostId": "AWS Server 2"
+    }]
+  });
+  instance.listen(port, () => console.log(`Arena is running on port ${port}`));  
+}
+
