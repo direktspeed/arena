@@ -2,18 +2,25 @@ const _ = require('lodash');
 const path = require('path');
 
 class Queues {
-  constructor(config) {
+  // Bee,
+  constructor(config = {}) {
     this._queues = {};
-
-    this.setConfig(config);
+    if (config.Bee) {
+      this.Bee = config.Bee
+    }
+    this.setConfig();
   }
 
   list() {
     return this._config.queues;
   }
 
-  setConfig(config) {
-    this._config = config;
+  addQueue(config) {
+    this._config.queues.push(config);
+  }
+  
+  setConfig(queues = []) {
+    this._config.queues = queues;
   }
 
   async get(queueName, queueHost) {
@@ -38,14 +45,16 @@ class Queues {
 
     let queue;
     if (isBee) {
-      Object.assign(options, {
-        isWorker: false,
-        getEvents: false,
-        sendEvents: false,
-        storeJobs: false
-      });
-      let Bee = require('bee-queue');
-      queue = new Bee(name, options);
+      if (!this.Bee) {
+        Object.assign(options, {
+          isWorker: false,
+          getEvents: false,
+          sendEvents: false,
+          storeJobs: false
+        });
+        this.Bee = require('bee-queue');
+      } 
+      queue = new this.Bee(name, options);
     } else {
       let Bull = require('bull');
       queue = new Bull(name, options);
