@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const handlebars = require('handlebars');
 const exphbs = require('express-handlebars');
 
-module.exports = function() {
+
   const hbs = exphbs.create({
     defaultLayout: `${__dirname}/views/layout`,
     handlebars,
@@ -31,8 +31,5 @@ module.exports = function() {
 
   app.use(bodyParser.json());
 
-  return {
-    app,
-    Queues: app.locals.Queues
-  };
-};
+  module.exports = app
+
