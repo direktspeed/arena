@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const Bull = require('bull');
-const Bee = require('bee-queue');
 const path = require('path');
 
 class Queues {
@@ -46,8 +44,10 @@ class Queues {
         sendEvents: false,
         storeJobs: false
       });
+      let Bee = require('bee-queue');
       queue = new Bee(name, options);
     } else {
+      let Bull = require('bull');
       queue = new Bull(name, options);
     }
 
